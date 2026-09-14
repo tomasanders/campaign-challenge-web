@@ -50,7 +50,7 @@ describe('ParticipantSignupComponent', () => {
       first_name: 'Ava', last_name: 'Martinez', email: 'ava@example.com', age: 29,
       country_code: 'US', marketing_opt_in: false
     });
-    expect(component.successMessage).toBe('Signup successful');
+    expect(component.successMessage).toBe('Signup successful (participant id: 1)');
     expect(component.signupForm.getRawValue()).toEqual({
       first_name: '', last_name: '', email: '', age: 13, country_code: '', marketing_opt_in: false
     });

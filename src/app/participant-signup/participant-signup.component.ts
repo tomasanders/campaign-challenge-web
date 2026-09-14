@@ -70,7 +70,7 @@ export class ParticipantSignupComponent {
     this.isSubmitting = true;
     this.api.createParticipant(this.toPayload()).subscribe({
       next: (response) => {
-        this.successMessage = response.message || 'Signup successful';
+        this.successMessage = `${response.message || 'Signup successful'} (participant id: ${response.participant.id})`;
         this.signupForm.reset({ age: 13, marketing_opt_in: false });
         this.isSubmitting = false;
       },
