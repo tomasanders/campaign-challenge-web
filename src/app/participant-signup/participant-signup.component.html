@@ -1,0 +1,110 @@
+<main class="workspace-shell">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Campaign operations</p>
+      <h1>Build the next audience.</h1>
+      <p class="intro">Capture participant details with care, then keep a clear view of everyone joining the campaign.</p>
+    </div>
+    <div class="header-mark" aria-hidden="true"><span>CC</span></div>
+  </header>
+
+  <div class="workspace-grid">
+    <section class="panel signup-panel" aria-labelledby="signup-title">
+      <div class="panel-heading">
+        <div>
+          <p class="section-label">New participant</p>
+          <h2 id="signup-title">Create a signup</h2>
+        </div>
+        <span class="step-indicator">01 <span>/ 01</span></span>
+      </div>
+
+      <form [formGroup]="signupForm" (ngSubmit)="submit()" novalidate>
+        <div class="name-fields">
+          <label>
+            First name
+            <input formControlName="first_name" type="text" autocomplete="given-name" [attr.aria-invalid]="hasError('first_name', 'required') || hasError('first_name', 'nameFormat')" />
+            <span class="field-error" *ngIf="hasError('first_name', 'required')">First name is required.</span>
+            <span class="field-error" *ngIf="hasError('first_name', 'minlength') || hasError('first_name', 'maxlength')">Use 2 to 50 characters.</span>
+            <span class="field-error" *ngIf="hasError('first_name', 'nameFormat')">Use letters, spaces, hyphens, or apostrophes.</span>
+            <span class="field-error" *ngFor="let message of messagesFor('first_name')">{{ message }}</span>
+          </label>
+          <label>
+            Last name
+            <input formControlName="last_name" type="text" autocomplete="family-name" />
+            <span class="field-error" *ngIf="hasError('last_name', 'required')">Last name is required.</span>
+            <span class="field-error" *ngIf="hasError('last_name', 'minlength') || hasError('last_name', 'maxlength')">Use 2 to 50 characters.</span>
+            <span class="field-error" *ngIf="hasError('last_name', 'nameFormat')">Use letters, spaces, hyphens, or apostrophes.</span>
+            <span class="field-error" *ngFor="let message of messagesFor('last_name')">{{ message }}</span>
+          </label>
+        </div>
+
+        <label>
+          Email address
+          <input formControlName="email" type="email" autocomplete="email" />
+          <span class="field-error" *ngIf="hasError('email', 'required')">Email is required.</span>
+          <span class="field-error" *ngIf="hasError('email', 'email')">Enter a valid email address.</span>
+          <span class="field-error" *ngFor="let message of messagesFor('email')">{{ message }}</span>
+        </label>
+
+        <div class="detail-fields">
+          <label>
+            Age
+            <input formControlName="age" type="number" min="13" max="120" inputmode="numeric" />
+            <span class="field-error" *ngIf="hasError('age', 'required') || hasError('age', 'integer') || hasError('age', 'min') || hasError('age', 'max')">Age must be an integer from 13 to 120.</span>
+            <span class="field-error" *ngFor="let message of messagesFor('age')">{{ message }}</span>
+          </label>
+          <label>
+            Country code
+            <input formControlName="country_code" type="text" maxlength="2" autocomplete="country" />
+            <span class="field-error" *ngIf="hasError('country_code', 'required') || hasError('country_code', 'pattern')">Enter a two-letter country code.</span>
+            <span class="field-error" *ngFor="let message of messagesFor('country_code')">{{ message }}</span>
+          </label>
+        </div>
+
+        <label class="checkbox-label">
+          <input formControlName="marketing_opt_in" type="checkbox" />
+          <span><strong>Keep me in the loop</strong><small>Receive occasional campaign updates and invitations.</small></span>
+        </label>
+
+        <div class="form-status" aria-live="polite">
+          <p class="success-message" *ngIf="successMessage">{{ successMessage }}</p>
+          <p class="general-error" *ngIf="submitError" role="alert">{{ submitError }}</p>
+        </div>
+
+        <button class="primary-button" type="submit" [disabled]="isSubmitting">
+          <span *ngIf="!isSubmitting">Add participant <span aria-hidden="true">→</span></span>
+          <span *ngIf="isSubmitting">Saving participant…</span>
+        </button>
+      </form>
+    </section>
+
+    <section class="panel roster-panel" aria-labelledby="roster-title">
+      <div class="panel-heading roster-heading">
+        <div>
+          <p class="section-label">Live roster</p>
+          <h2 id="roster-title">Participants</h2>
+        </div>
+        <span class="count-badge" *ngIf="!isLoadingParticipants">{{ participants.length }}</span>
+      </div>
+
+      <div class="state-message" *ngIf="isLoadingParticipants" aria-live="polite"><span class="loader" aria-hidden="true"></span>Loading roster…</div>
+      <div class="state-message error-state" *ngIf="!isLoadingParticipants && participantLoadError" role="alert">{{ participantLoadError }} <button type="button" (click)="loadParticipants()">Retry</button></div>
+      <div class="state-message" *ngIf="!isLoadingParticipants && !participantLoadError && participants.length === 0">No participants yet. Your first signup will appear here.</div>
+
+      <div class="table-wrap" *ngIf="!isLoadingParticipants && !participantLoadError && participants.length > 0">
+        <table>
+          <caption class="visually-hidden">Campaign participants</caption>
+          <thead><tr><th scope="col">Participant</th><th scope="col">Age</th><th scope="col">Location</th><th scope="col">Updates</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let participant of participants">
+              <th scope="row"><span class="participant-name">{{ participant.first_name }} {{ participant.last_name }}</span><span class="participant-email">{{ participant.email }}</span></th>
+              <td data-label="Age">{{ participant.age }}</td>
+              <td data-label="Location"><span class="country-code">{{ participant.country_code }}</span></td>
+              <td data-label="Updates"><span class="status-pill" [class.opted-in]="participant.marketing_opt_in">{{ participant.marketing_opt_in ? 'Opted in' : 'Not opted in' }}</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</main>
