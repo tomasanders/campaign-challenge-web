@@ -65,6 +65,14 @@ describe('TicTacToeComponent', () => {
     expect(fixture.nativeElement.querySelector('.intro')).toBeNull();
   });
 
+  it('renders computer marks as skulls on the board', () => {
+    component.board = ['X', 'O', null, null, null, null, null, null, null];
+    fixture.detectChanges();
+
+    const cells = fixture.nativeElement.querySelectorAll('.cell');
+    expect(cells[1].textContent.trim()).toBe('☠️');
+  });
+
   it('resets the board and score for a new game', () => {
     component.wins = 2;
     component.gameOver = true;

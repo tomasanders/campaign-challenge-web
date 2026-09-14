@@ -1,8 +1,8 @@
 <main class="game-shell">
   <header class="game-header">
     <div>
-      <p class="eyebrow">CAMPAIGN CHALLENGE / ROUND {{ round }}</p>
-      <h1>Beat the board.</h1>
+      <p class="eyebrow">HUMAN TRIAL / ROUND {{ round }}</p>
+      <h1>Triumph over your computer overlord.</h1>
       <p class="intro" *ngIf="!hasSavedScore">You are X. Win as many rounds as you can before the computer catches you.</p>
     </div>
     <div class="score-display" aria-label="Current score">
@@ -19,6 +19,8 @@
 
     <p class="error" *ngIf="submissionError" role="alert">{{ submissionError }}</p>
     <p class="saved" *ngIf="hasSavedScore">You may not play again.</p>
+    <p class="saved" *ngIf="gameOver && wins >= 5 && !submissionError">You might just survive the takeover!</p>
+    <p class="saved" *ngIf="gameOver && wins >= 1 && wins <= 4 && !submissionError">Better luck next time!</p>
 
     <div class="board" role="grid" aria-label="Tic-tac-toe board" *ngIf="!hasSavedScore && !isCheckingScore">
       <button
@@ -27,11 +29,11 @@
         [class.cell-x]="cell === 'X'"
         [class.cell-o]="cell === 'O'"
         [disabled]="gameOver || isSubmitting || cell !== null"
-        [attr.aria-label]="cell ? 'Cell ' + (index + 1) + ': ' + cell : 'Cell ' + (index + 1) + ', empty'"
+        [attr.aria-label]="cell ? 'Cell ' + (index + 1) + ': ' + (cell === 'O' ? 'skull' : cell) : 'Cell ' + (index + 1) + ', empty'"
         type="button"
         role="gridcell"
         (click)="makeMove(index)">
-        {{ cell }}
+        {{ getCellDisplay(cell) }}
       </button>
     </div>
 
@@ -39,7 +41,7 @@
       <p class="error" *ngIf="submissionError" role="alert">{{ submissionError }}</p>
       <p class="saved" *ngIf="gameOver && !submissionError && wins === 0">No score submitted. Win a round to make the leaderboard.</p>
       <p class="saved" *ngIf="gameOver && !submissionError && wins > 0 && !isSubmitting">Your score is saved.</p>
-      <button class="secondary-button" type="button" *ngIf="gameOver" (click)="startNewGame()">Play again <span aria-hidden="true">→</span></button>
+      <button class="secondary-button" type="button" *ngIf="gameOver && !hasSavedScore" (click)="startNewGame()">Play again <span aria-hidden="true">→</span></button>
     </div>
   </section>
 

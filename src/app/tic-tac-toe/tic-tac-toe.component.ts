@@ -118,9 +118,17 @@ export class TicTacToeComponent {
     this.resultMessage = message;
   }
 
+  getCellDisplay(cell: Cell): string {
+    if (cell === 'O') {
+      return '☠️';
+    }
+
+    return cell ?? '';
+  }
+
   private finishGame(): void {
     this.gameOver = true;
-    this.resultMessage = 'The computer won this round.';
+    this.resultMessage = 'Better luck next time...';
 
     if (this.wins === 0 || this.scoreSubmitted) {
       return;
