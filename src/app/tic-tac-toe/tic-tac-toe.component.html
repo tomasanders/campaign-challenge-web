@@ -1,0 +1,47 @@
+<main class="game-shell">
+  <header class="game-header">
+    <div>
+      <p class="eyebrow">CAMPAIGN CHALLENGE / ROUND {{ round }}</p>
+      <h1>Beat the board.</h1>
+      <p class="intro" *ngIf="!hasSavedScore">You are X. Win as many rounds as you can before the computer catches you.</p>
+    </div>
+    <div class="score-display" aria-label="Current score">
+      <span>Score</span>
+      <strong>{{ wins }}</strong>
+    </div>
+  </header>
+
+  <section class="game-panel" aria-labelledby="board-title">
+    <div class="status-row">
+      <h2 id="board-title">Tic-tac-toe</h2>
+      <p aria-live="polite">{{ resultMessage }}</p>
+    </div>
+
+    <p class="error" *ngIf="submissionError" role="alert">{{ submissionError }}</p>
+    <p class="saved" *ngIf="hasSavedScore">You may not play again.</p>
+
+    <div class="board" role="grid" aria-label="Tic-tac-toe board" *ngIf="!hasSavedScore && !isCheckingScore">
+      <button
+        *ngFor="let cell of board; let index = index"
+        class="cell"
+        [class.cell-x]="cell === 'X'"
+        [class.cell-o]="cell === 'O'"
+        [disabled]="gameOver || isSubmitting || cell !== null"
+        [attr.aria-label]="cell ? 'Cell ' + (index + 1) + ': ' + cell : 'Cell ' + (index + 1) + ', empty'"
+        type="button"
+        role="gridcell"
+        (click)="makeMove(index)">
+        {{ cell }}
+      </button>
+    </div>
+
+    <div class="game-footer" aria-live="polite">
+      <p class="error" *ngIf="submissionError" role="alert">{{ submissionError }}</p>
+      <p class="saved" *ngIf="gameOver && !submissionError && wins === 0">No score submitted. Win a round to make the leaderboard.</p>
+      <p class="saved" *ngIf="gameOver && !submissionError && wins > 0 && !isSubmitting">Your score is saved.</p>
+      <button class="secondary-button" type="button" *ngIf="gameOver" (click)="startNewGame()">Play again <span aria-hidden="true">→</span></button>
+    </div>
+  </section>
+
+  <a class="back-link" routerLink="/">← Start over with a new participant</a>
+</main>

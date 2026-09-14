@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
-
-import { ParticipantSignupComponent } from './participant-signup/participant-signup.component';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [ParticipantSignupComponent],
+  imports: [RouterOutlet],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

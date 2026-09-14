@@ -8,6 +8,7 @@ import {
   Participant,
   SignupResponse
 } from '../models/participant.model';
+import { CreateScorePayload, ScoreResponse } from '../models/score.model';
 
 @Injectable({ providedIn: 'root' })
 export class ParticipantApiService {
@@ -20,5 +21,13 @@ export class ParticipantApiService {
 
   createParticipant(payload: CreateParticipantPayload): Observable<SignupResponse> {
     return this.http.post<SignupResponse>(this.participantsUrl, payload);
+  }
+
+  getScore(participantId: number): Observable<ScoreResponse> {
+    return this.http.get<ScoreResponse>(`${this.participantsUrl}/${participantId}/scores`);
+  }
+
+  submitScore(participantId: number, payload: CreateScorePayload): Observable<ScoreResponse> {
+    return this.http.post<ScoreResponse>(`${this.participantsUrl}/${participantId}/scores`, payload);
   }
 }

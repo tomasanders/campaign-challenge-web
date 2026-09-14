@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import {
   AbstractControl,
   FormBuilder,
@@ -36,6 +37,7 @@ function integerValidator(control: AbstractControl): ValidationErrors | null {
 export class ParticipantSignupComponent {
   private readonly formBuilder = inject(FormBuilder);
   private readonly api = inject(ParticipantApiService);
+  private readonly router = inject(Router);
 
   readonly signupForm = this.formBuilder.nonNullable.group({
     first_name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50), nameValidator]],
@@ -70,9 +72,7 @@ export class ParticipantSignupComponent {
     this.isSubmitting = true;
     this.api.createParticipant(this.toPayload()).subscribe({
       next: (response) => {
-        this.successMessage = `${response.message || 'Signup successful'} (participant id: ${response.participant.id})`;
-        this.signupForm.reset({ age: 13, marketing_opt_in: false });
-        this.isSubmitting = false;
+        this.router.navigate(['/game', response.participant.id]);
       },
       error: (error: HttpErrorResponse) => {
         this.isSubmitting = false;

@@ -36,4 +36,20 @@ describe('ParticipantApiService', () => {
     expect(request.request.body).toEqual(payload);
     request.flush({ participant: payload, message: 'Signup successful' }, { status: 201, statusText: 'Created' });
   });
+
+  it('posts a score for a participant', () => {
+    const payload = { score: 2, duration_ms: 34_567 };
+    service.submitScore(7, payload).subscribe((response) => expect(response.score.score).toBe(2));
+    const request = http.expectOne('http://localhost:3000/api/v1/participants/7/scores');
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body).toEqual(payload);
+    request.flush({ score: { ...payload, id: 1, participant_id: 7, played_at: '', created_at: '', updated_at: '' } }, { status: 201, statusText: 'Created' });
+  });
+
+  it('gets a participant score', () => {
+    service.getScore(7).subscribe((response) => expect(response.score.score).toBe(2));
+    const request = http.expectOne('http://localhost:3000/api/v1/participants/7/scores');
+    expect(request.request.method).toBe('GET');
+    request.flush({ score: { id: 1, participant_id: 7, score: 2, duration_ms: 100, played_at: '', created_at: '', updated_at: '' } });
+  });
 });

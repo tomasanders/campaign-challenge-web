@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
 import { Subject, of } from 'rxjs';
 
 import { Participant } from './models/participant.model';
@@ -10,13 +11,18 @@ describe('ParticipantSignupComponent', () => {
   let fixture: ComponentFixture<ParticipantSignupComponent>;
   let component: ParticipantSignupComponent;
   let api: jasmine.SpyObj<ParticipantApiService>;
+  let router: jasmine.SpyObj<Router>;
 
   beforeEach(async () => {
     api = jasmine.createSpyObj('ParticipantApiService', ['getParticipants', 'createParticipant']);
     api.getParticipants.and.returnValue(of([]));
+    router = jasmine.createSpyObj('Router', ['navigate']);
     await TestBed.configureTestingModule({
       imports: [ParticipantSignupComponent],
-      providers: [{ provide: ParticipantApiService, useValue: api }]
+      providers: [
+        { provide: ParticipantApiService, useValue: api },
+        { provide: Router, useValue: router }
+      ]
     }).compileComponents();
     fixture = TestBed.createComponent(ParticipantSignupComponent);
     component = fixture.componentInstance;
@@ -38,7 +44,7 @@ describe('ParticipantSignupComponent', () => {
     expect(api.createParticipant).not.toHaveBeenCalled();
   });
 
-  it('normalizes the payload and refreshes the list after a successful signup', () => {
+  it('normalizes the payload and navigates to the game after a successful signup', () => {
     component.signupForm.setValue({
       first_name: ' Ava ', last_name: 'Martinez', email: ' AVA@EXAMPLE.COM ', age: 29,
       country_code: ' us ', marketing_opt_in: false
@@ -50,10 +56,7 @@ describe('ParticipantSignupComponent', () => {
       first_name: 'Ava', last_name: 'Martinez', email: 'ava@example.com', age: 29,
       country_code: 'US', marketing_opt_in: false
     });
-    expect(component.successMessage).toBe('Signup successful (participant id: 1)');
-    expect(component.signupForm.getRawValue()).toEqual({
-      first_name: '', last_name: '', email: '', age: 13, country_code: '', marketing_opt_in: false
-    });
+    expect(router.navigate).toHaveBeenCalledWith(['/game', 1]);
   });
 
   it('maps Rails validation errors to fields and blocks duplicate submissions', () => {
