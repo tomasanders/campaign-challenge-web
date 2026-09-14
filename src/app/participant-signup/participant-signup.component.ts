@@ -86,6 +86,12 @@ export class ParticipantSignupComponent {
     });
   }
 
+  startAnotherSignup(): void {
+    this.successMessage = '';
+    this.submitError = '';
+    this.fieldErrors = {};
+  }
+
   hasError(field: string, error: string): boolean {
     const control = this.signupForm.get(field);
     return !!control && control.touched && control.hasError(error);

@@ -8,7 +8,7 @@
     <div class="header-mark" aria-hidden="true"><span>CC</span></div>
   </header>
 
-  <section class="panel signup-panel" aria-labelledby="signup-title">
+  <section class="panel signup-panel" aria-labelledby="signup-title" *ngIf="!successMessage; else confirmationSplash">
       <div class="panel-heading">
         <div>
           <p class="section-label">New participant</p>
@@ -66,7 +66,6 @@
         </label>
 
         <div class="form-status" aria-live="polite">
-          <p class="success-message" *ngIf="successMessage">{{ successMessage }}</p>
           <p class="general-error" *ngIf="submitError" role="alert">{{ submitError }}</p>
         </div>
 
@@ -76,4 +75,15 @@
         </button>
       </form>
   </section>
+
+  <ng-template #confirmationSplash>
+    <section class="panel confirmation-panel" aria-labelledby="confirmation-title" aria-live="polite">
+      <div class="confirmation-mark" aria-hidden="true">✓</div>
+      <p class="section-label">Signup complete</p>
+      <h2 id="confirmation-title">You're on the list.</h2>
+      <p class="confirmation-message">{{ successMessage }}</p>
+      <p class="confirmation-detail">Thanks for joining the campaign. We’ll be in touch with what comes next.</p>
+      <button class="secondary-button" type="button" (click)="startAnotherSignup()">Add another participant <span aria-hidden="true">→</span></button>
+    </section>
+  </ng-template>
 </main>
