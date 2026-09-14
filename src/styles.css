@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
 
-:root { color-scheme: light; font-family: 'DM Sans', sans-serif; }
+:root { --surface: #121212; --mid-tone: #363b3d; --text: #e7e6f0; --hero: #f75a16; color-scheme: dark; font-family: 'DM Sans', sans-serif; }
 * { box-sizing: border-box; }
-body { background: #f6f1ea; color: #203237; margin: 0; }
+body { background: var(--surface); color: var(--text); margin: 0; }
 button, input { font: inherit; }

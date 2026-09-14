@@ -1,22 +1,14 @@
 <main class="workspace-shell">
   <header class="page-header">
     <div>
-      <p class="eyebrow">Campaign operations</p>
-      <h1>Build the next audience.</h1>
-      <p class="intro">Capture participant details with care, then keep a clear view of everyone joining the campaign.</p>
+      <p class="eyebrow">QUESTIONABLE ASSETS LTD.</p>
+      <h1>Sign up for our new trial!</h1>
+      <p class="intro">Let us harvest your data to grow our assets.</p>
     </div>
-    <div class="header-mark" aria-hidden="true"><span>CC</span></div>
+    <div class="header-mark" aria-hidden="true"><span>☠</span></div>
   </header>
 
   <section class="panel signup-panel" aria-labelledby="signup-title" *ngIf="!successMessage; else confirmationSplash">
-      <div class="panel-heading">
-        <div>
-          <p class="section-label">New participant</p>
-          <h2 id="signup-title">Create a signup</h2>
-        </div>
-        <span class="step-indicator">01 <span>/ 01</span></span>
-      </div>
-
       <form [formGroup]="signupForm" (ngSubmit)="submit()" novalidate>
         <div class="name-fields">
           <label>
@@ -70,8 +62,8 @@
         </div>
 
         <button class="primary-button" type="submit" [disabled]="isSubmitting">
-          <span *ngIf="!isSubmitting">Add participant <span aria-hidden="true">→</span></span>
-          <span *ngIf="isSubmitting">Saving participant…</span>
+          <span *ngIf="!isSubmitting">Submit</span>
+          <span *ngIf="isSubmitting">Processing</span>
         </button>
       </form>
   </section>
