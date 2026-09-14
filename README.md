@@ -1,59 +1,52 @@
-# CampaignChallengeWeb
+# Campaign Challenge Web
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.27.
+Angular 19 frontend for the Campaign Challenge participant signup workflow. The standalone Angular application talks directly to the Rails API.
 
-## Development server
+## Local development
 
-To start a local development server, run:
-
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Start the Rails API first. From the Rails API project:
 
 ```bash
-ng generate component component-name
+bin/rails server -p 3000
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+The API must allow browser requests from `http://localhost:4200` through CORS. The Angular development API URL is configured in [src/environments/environment.ts](src/environments/environment.ts).
+
+For Angular live reload on its own port, install dependencies and start Angular:
 
 ```bash
-ng generate --help
+npm install
+npm start
 ```
+
+Once the Angular server is running, open `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
 ## Building
 
 To build the project run:
 
 ```bash
-ng build
+npm run build
 ```
 
 This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
 
-## Running unit tests
+## Unit tests
 
 To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
 
 ```bash
-ng test
+npm test -- --watch=false --browsers=ChromeHeadless
 ```
 
-## Running end-to-end tests
+Tests use Brave's Chromium binary by default on macOS. If Brave is installed in a different location, set `CHROME_BIN` to its executable path before running `ng test`.
 
-For end-to-end (e2e) testing, run:
+## API contract
 
-```bash
-ng e2e
-```
+The frontend expects:
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+- `GET /api/v1/participants` returning a bare participant array.
+- `POST /api/v1/participants` accepting a flat participant payload and returning `{ participant, message }` with `201 Created`.
+- `422 Unprocessable Entity` responses shaped as `{ errors: { field: string[] } }`.
 
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+The production environment currently uses the same API URL placeholder. Set `apiBaseUrl` in [src/environments/environment.production.ts](src/environments/environment.production.ts) for a deployed Rails API.

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -11,7 +11,6 @@ import {
 
 import {
   CreateParticipantPayload,
-  Participant,
   RailsValidationErrors
 } from '../models/participant.model';
 import { ParticipantApiService } from '../services/participant-api.service';
@@ -34,7 +33,7 @@ function integerValidator(control: AbstractControl): ValidationErrors | null {
   templateUrl: './participant-signup.component.html',
   styleUrl: './participant-signup.component.css'
 })
-export class ParticipantSignupComponent implements OnInit {
+export class ParticipantSignupComponent {
   private readonly formBuilder = inject(FormBuilder);
   private readonly api = inject(ParticipantApiService);
 
@@ -47,32 +46,10 @@ export class ParticipantSignupComponent implements OnInit {
     marketing_opt_in: [false]
   });
 
-  participants: Participant[] = [];
-  isLoadingParticipants = true;
   isSubmitting = false;
-  participantLoadError = '';
   submitError = '';
   successMessage = '';
   fieldErrors: Record<string, string[]> = {};
-
-  ngOnInit(): void {
-    this.loadParticipants();
-  }
-
-  loadParticipants(): void {
-    this.isLoadingParticipants = true;
-    this.participantLoadError = '';
-    this.api.getParticipants().subscribe({
-      next: (participants) => {
-        this.participants = participants;
-        this.isLoadingParticipants = false;
-      },
-      error: () => {
-        this.isLoadingParticipants = false;
-        this.participantLoadError = 'We could not load participants. Please try again.';
-      }
-    });
-  }
 
   submit(): void {
     this.successMessage = '';
@@ -96,7 +73,6 @@ export class ParticipantSignupComponent implements OnInit {
         this.successMessage = response.message || 'Signup successful';
         this.signupForm.reset({ age: 13, marketing_opt_in: false });
         this.isSubmitting = false;
-        this.loadParticipants();
       },
       error: (error: HttpErrorResponse) => {
         this.isSubmitting = false;

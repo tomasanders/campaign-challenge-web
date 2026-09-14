@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Subject, of, throwError } from 'rxjs';
+import { Subject, of } from 'rxjs';
 
 import { Participant } from './models/participant.model';
 import { ParticipantSignupComponent } from './participant-signup/participant-signup.component';
@@ -11,16 +11,6 @@ describe('ParticipantSignupComponent', () => {
   let component: ParticipantSignupComponent;
   let api: jasmine.SpyObj<ParticipantApiService>;
 
-  const participant: Participant = {
-    id: 1,
-    first_name: 'Ava',
-    last_name: 'Martinez',
-    email: 'ava@example.com',
-    age: 29,
-    country_code: 'US',
-    marketing_opt_in: true
-  };
-
   beforeEach(async () => {
     api = jasmine.createSpyObj('ParticipantApiService', ['getParticipants', 'createParticipant']);
     api.getParticipants.and.returnValue(of([]));
@@ -30,7 +20,6 @@ describe('ParticipantSignupComponent', () => {
     }).compileComponents();
     fixture = TestBed.createComponent(ParticipantSignupComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('validates names, age, country code, email, and the required fields', () => {
@@ -54,9 +43,7 @@ describe('ParticipantSignupComponent', () => {
       first_name: ' Ava ', last_name: 'Martinez', email: ' AVA@EXAMPLE.COM ', age: 29,
       country_code: ' us ', marketing_opt_in: false
     });
-    api.createParticipant.and.returnValue(of({ participant, message: 'Signup successful' }));
-    api.getParticipants.calls.reset();
-
+    api.createParticipant.and.returnValue(of({ participant: { ...component.signupForm.getRawValue(), id: 1 }, message: 'Signup successful' }));
     component.submit();
 
     expect(api.createParticipant).toHaveBeenCalledWith({
@@ -67,7 +54,6 @@ describe('ParticipantSignupComponent', () => {
     expect(component.signupForm.getRawValue()).toEqual({
       first_name: '', last_name: '', email: '', age: 13, country_code: '', marketing_opt_in: false
     });
-    expect(api.getParticipants).toHaveBeenCalled();
   });
 
   it('maps Rails validation errors to fields and blocks duplicate submissions', () => {
@@ -86,13 +72,4 @@ describe('ParticipantSignupComponent', () => {
     expect(component.signupForm.get('email')?.hasError('backend')).toBeTrue();
   });
 
-  it('shows a participant loading failure and allows retry', () => {
-    api.getParticipants.and.returnValues(throwError(() => new Error('offline')), of([participant]));
-    component.loadParticipants();
-    expect(component.participantLoadError).toContain('could not load');
-
-    component.loadParticipants();
-    expect(component.participants).toEqual([participant]);
-    expect(component.participantLoadError).toBe('');
-  });
 });

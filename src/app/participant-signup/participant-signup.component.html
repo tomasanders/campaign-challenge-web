@@ -8,8 +8,7 @@
     <div class="header-mark" aria-hidden="true"><span>CC</span></div>
   </header>
 
-  <div class="workspace-grid">
-    <section class="panel signup-panel" aria-labelledby="signup-title">
+  <section class="panel signup-panel" aria-labelledby="signup-title">
       <div class="panel-heading">
         <div>
           <p class="section-label">New participant</p>
@@ -76,35 +75,5 @@
           <span *ngIf="isSubmitting">Saving participant…</span>
         </button>
       </form>
-    </section>
-
-    <section class="panel roster-panel" aria-labelledby="roster-title">
-      <div class="panel-heading roster-heading">
-        <div>
-          <p class="section-label">Live roster</p>
-          <h2 id="roster-title">Participants</h2>
-        </div>
-        <span class="count-badge" *ngIf="!isLoadingParticipants">{{ participants.length }}</span>
-      </div>
-
-      <div class="state-message" *ngIf="isLoadingParticipants" aria-live="polite"><span class="loader" aria-hidden="true"></span>Loading roster…</div>
-      <div class="state-message error-state" *ngIf="!isLoadingParticipants && participantLoadError" role="alert">{{ participantLoadError }} <button type="button" (click)="loadParticipants()">Retry</button></div>
-      <div class="state-message" *ngIf="!isLoadingParticipants && !participantLoadError && participants.length === 0">No participants yet. Your first signup will appear here.</div>
-
-      <div class="table-wrap" *ngIf="!isLoadingParticipants && !participantLoadError && participants.length > 0">
-        <table>
-          <caption class="visually-hidden">Campaign participants</caption>
-          <thead><tr><th scope="col">Participant</th><th scope="col">Age</th><th scope="col">Location</th><th scope="col">Updates</th></tr></thead>
-          <tbody>
-            <tr *ngFor="let participant of participants">
-              <th scope="row"><span class="participant-name">{{ participant.first_name }} {{ participant.last_name }}</span><span class="participant-email">{{ participant.email }}</span></th>
-              <td data-label="Age">{{ participant.age }}</td>
-              <td data-label="Location"><span class="country-code">{{ participant.country_code }}</span></td>
-              <td data-label="Updates"><span class="status-pill" [class.opted-in]="participant.marketing_opt_in">{{ participant.marketing_opt_in ? 'Opted in' : 'Not opted in' }}</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-  </div>
+  </section>
 </main>
