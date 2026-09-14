@@ -18,9 +18,8 @@
     </div>
 
     <p class="error" *ngIf="submissionError" role="alert">{{ submissionError }}</p>
-    <p class="saved" *ngIf="hasSavedScore">You may not play again.</p>
-    <p class="saved" *ngIf="gameOver && wins >= 5 && !submissionError">You might just survive the takeover!</p>
-    <p class="saved" *ngIf="gameOver && wins >= 1 && wins <= 4 && !submissionError">Better luck next time!</p>
+    <p class="saved" *ngIf="gameOver && wins >= 5 && !submissionError && !isSubmitting">You might just survive the takeover! Your score is saved.</p>
+    <p class="saved" *ngIf="gameOver && wins >= 1 && wins <= 4 && !submissionError && !isSubmitting">Better luck next time! Your score is saved.</p>
 
     <div class="board" role="grid" aria-label="Tic-tac-toe board" *ngIf="!hasSavedScore && !isCheckingScore">
       <button
@@ -40,9 +39,36 @@
     <div class="game-footer" aria-live="polite">
       <p class="error" *ngIf="submissionError" role="alert">{{ submissionError }}</p>
       <p class="saved" *ngIf="gameOver && !submissionError && wins === 0">No score submitted. Win a round to make the leaderboard.</p>
-      <p class="saved" *ngIf="gameOver && !submissionError && wins > 0 && !isSubmitting">Your score is saved.</p>
+      <p class="leaderboard-notice" *ngIf="leaderboardNotice">{{ leaderboardNotice }}</p>
       <button class="secondary-button" type="button" *ngIf="gameOver && !hasSavedScore" (click)="startNewGame()">Play again <span aria-hidden="true">→</span></button>
     </div>
+  </section>
+
+  <section class="leaderboard" aria-labelledby="leaderboard-title">
+    <div class="leaderboard-header">
+      <h2 id="leaderboard-title">Top 10 scores</h2>
+      <span *ngIf="!leaderboardError">All-time</span>
+    </div>
+    <p class="leaderboard-message" *ngIf="leaderboardError">Leaderboard unavailable right now.</p>
+    <p class="leaderboard-message" *ngIf="!leaderboardError && leaderboard.length === 0">No scores yet. Be the first on the board.</p>
+    <table *ngIf="!leaderboardError && leaderboard.length > 0">
+      <thead>
+        <tr>
+          <th scope="col">Rank</th>
+          <th scope="col">Player</th>
+          <th scope="col">Score</th>
+          <th scope="col">Played</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let entry of leaderboard; let index = index">
+          <td>{{ index + 1 }}</td>
+          <td>{{ entry.first_name }}</td>
+          <td>{{ entry.score }}</td>
+          <td>{{ entry.played_at | date: 'MMM d, y' }}</td>
+        </tr>
+      </tbody>
+    </table>
   </section>
 
   <a class="back-link" routerLink="/">← Start over with a new participant</a>

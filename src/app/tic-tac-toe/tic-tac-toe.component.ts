@@ -4,6 +4,7 @@ import { Component, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { catchError, of } from 'rxjs';
 
+import { LeaderboardEntry } from '../models/leaderboard.model';
 import { ParticipantApiService } from '../services/participant-api.service';
 
 type Cell = 'X' | 'O' | null;
@@ -35,10 +36,15 @@ export class TicTacToeComponent {
   hasSavedScore = false;
   submissionError = '';
   resultMessage = 'Checking your game status...';
+  leaderboard: LeaderboardEntry[] = [];
+  leaderboardError = false;
+  leaderboardNotice = '';
   private readonly gameStartedAt = Date.now();
   private scoreSubmitted = false;
 
   constructor() {
+    this.loadLeaderboard();
+
     this.api.getScore(this.participantId).pipe(
       catchError((error: { status?: number }) => {
         if (error.status === 404) {
@@ -144,12 +150,34 @@ export class TicTacToeComponent {
         this.isSubmitting = false;
         this.hasSavedScore = true;
         this.resultMessage = `Game over. Final score: ${this.wins}.`;
+        this.loadLeaderboard(this.wins);
       },
       error: (error: HttpErrorResponse) => {
         this.isSubmitting = false;
         this.submissionError = error.status === 422
           ? 'This score could not be recorded.'
           : 'We could not record your score. Please try again.';
+      }
+    });
+  }
+
+  private loadLeaderboard(submittedScore?: number): void {
+    this.api.getLeaderboard().pipe(
+      catchError(() => {
+        this.leaderboardError = true;
+        return of({ leaderboard: [] });
+      })
+    ).subscribe((response) => {
+      this.leaderboardError = false;
+      this.leaderboard = response.leaderboard;
+
+      if (submittedScore === undefined || response.leaderboard.length === 0) {
+        return;
+      }
+
+      const lowestScore = response.leaderboard[response.leaderboard.length - 1].score;
+      if (response.leaderboard.length < 10 || submittedScore >= lowestScore) {
+        this.leaderboardNotice = 'Your score made the leaderboard!';
       }
     });
   }

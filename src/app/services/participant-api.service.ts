@@ -8,6 +8,7 @@ import {
   Participant,
   SignupResponse
 } from '../models/participant.model';
+import { LeaderboardResponse } from '../models/leaderboard.model';
 import { CreateScorePayload, ScoreResponse } from '../models/score.model';
 
 @Injectable({ providedIn: 'root' })
@@ -25,6 +26,10 @@ export class ParticipantApiService {
 
   getScore(participantId: number): Observable<ScoreResponse> {
     return this.http.get<ScoreResponse>(`${this.participantsUrl}/${participantId}/scores`);
+  }
+
+  getLeaderboard(): Observable<LeaderboardResponse> {
+    return this.http.get<LeaderboardResponse>(`${environment.apiBaseUrl}/api/v1/leaderboard`);
   }
 
   submitScore(participantId: number, payload: CreateScorePayload): Observable<ScoreResponse> {

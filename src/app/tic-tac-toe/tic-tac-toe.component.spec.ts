@@ -11,7 +11,8 @@ describe('TicTacToeComponent', () => {
   let api: jasmine.SpyObj<ParticipantApiService>;
 
   beforeEach(async () => {
-    api = jasmine.createSpyObj('ParticipantApiService', ['getScore', 'submitScore']);
+    api = jasmine.createSpyObj('ParticipantApiService', ['getLeaderboard', 'getScore', 'submitScore']);
+    api.getLeaderboard.and.returnValue(of({ leaderboard: [] }));
     api.getScore.and.returnValue(throwError(() => ({ status: 404 })));
     api.submitScore.and.returnValue(of({ score: {
       id: 1,
@@ -73,6 +74,18 @@ describe('TicTacToeComponent', () => {
     expect(cells[1].textContent.trim()).toBe('☠️');
   });
 
+  it('renders the leaderboard below the board', () => {
+    api.getLeaderboard.and.returnValue(of({ leaderboard: [
+      { score: 5, first_name: 'Ava', played_at: '2026-09-14T12:00:00Z' }
+    ] }));
+    fixture = TestBed.createComponent(TicTacToeComponent);
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.leaderboard').textContent).toContain('Ava');
+    expect(fixture.nativeElement.querySelectorAll('tbody tr').length).toBe(1);
+  });
+
   it('resets the board and score for a new game', () => {
     component.wins = 2;
     component.gameOver = true;
@@ -84,6 +97,12 @@ describe('TicTacToeComponent', () => {
   });
 
   it('submits one positive score when the computer wins after a previous player win', () => {
+    api.getLeaderboard.and.returnValues(
+      of({ leaderboard: [] }),
+      of({ leaderboard: [{ score: 1, first_name: 'Ava', played_at: '' }] })
+    );
+    fixture = TestBed.createComponent(TicTacToeComponent);
+    component = fixture.componentInstance;
     component.wins = 1;
     component.board = ['O', 'O', null, 'X', null, null, null, null, null];
 
@@ -92,6 +111,7 @@ describe('TicTacToeComponent', () => {
     expect(api.submitScore).toHaveBeenCalledTimes(1);
     expect(api.submitScore).toHaveBeenCalledWith(7, jasmine.objectContaining({ score: 1 }));
     expect(component.hasSavedScore).toBeTrue();
+    expect(component.leaderboardNotice).toBe('Your score made the leaderboard!');
     component.startNewGame();
     expect(component.gameOver).toBeTrue();
   });

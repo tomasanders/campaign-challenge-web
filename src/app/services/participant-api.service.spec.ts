@@ -52,4 +52,11 @@ describe('ParticipantApiService', () => {
     expect(request.request.method).toBe('GET');
     request.flush({ score: { id: 1, participant_id: 7, score: 2, duration_ms: 100, played_at: '', created_at: '', updated_at: '' } });
   });
+
+  it('gets the leaderboard', () => {
+    service.getLeaderboard().subscribe((response) => expect(response.leaderboard[0].score).toBe(5));
+    const request = http.expectOne('http://localhost:3000/api/v1/leaderboard');
+    expect(request.request.method).toBe('GET');
+    request.flush({ leaderboard: [{ score: 5, first_name: 'Ava', played_at: '' }] });
+  });
 });
